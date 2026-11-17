@@ -178,6 +178,7 @@
         <button class="btn" id="aiRun" type="button">识别这张照片</button>
         <button class="btn gray" id="aiCfg" type="button">接口设置</button>
       </div>
+      <p class="aistate" id="aiState">已接通</p>
       <div id="aiCfgBox" hidden style="margin-top:12px">
         <div class="grid2">
           <div class="field">
@@ -191,7 +192,7 @@
         </div>
         <div class="actions">
           <button class="btn ghost" id="aiSave" type="button">保存配置</button>
-          <span class="aistate" id="aiState">已接通</span>
+          <span class="aistate" id="aiSaveState">已接通</span>
         </div>
       </div>
     </div>
@@ -368,5 +369,6 @@
   </button>
 </div>
 <script src="app.js"></script>
+<script src="fix.js"></script>
 </body>
 </html>
