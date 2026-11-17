@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>减脂 App · 170 → 140</title>
+<meta name="theme-color" content="#f6ede0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="减脂">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%238b5c3a'/%3E%3Cpath d='M14 30c0-4 3-7 7-7h6' stroke='%23fff' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='33' cy='17' r='5' fill='%23f7e9d7'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Archivo:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<script src="https://fastly.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="bg" aria-hidden="true"><span class="b1"></span><span class="b2"></span><span class="b3"></span><span class="b4"></span><span class="b5"></span></div>
+<div class="wrap">
+  <div class="topbar">
+    <h1>减脂 · 170 → 140 斤</h1>
+    <span class="badge" id="phaseBadge">适应期</span>
+  </div>
+
+  <!-- ============ 身体数据 ============ -->
+  <div class="pane on" id="pane-body">
+    <div class="card herocard">
+      <div class="hero">
+        <div>
+          <div class="heroLabel">当前体重</div>
+          <div class="big" id="curW">170<span>斤</span></div>
+          <div class="statrow">
+            <div><em>已减</em><b id="doneW">0 斤</b></div>
+            <div><em>距目标</em><b id="leftW">30 斤</b></div>
+            <div><em>7 日均值</em><b id="avg7">—</b></div>
+          </div>
+        </div>
+        <div class="ring">
+          <svg viewBox="0 0 160 160" aria-hidden="true">
+            <circle cx="80" cy="80" r="63" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="6"/>
+            <circle id="ringArc" cx="80" cy="80" r="63" fill="none" stroke="#8b5c3a" stroke-width="6"
+                    stroke-linecap="round" stroke-dasharray="395.8" stroke-dashoffset="395.8"/>
+          </svg>
+          <div class="pct" id="ringPct">0%</div>
+        </div>
+      </div>
+      <div class="figstrip" id="figStrip"></div>
+    </div>
+
+    <div class="card">
+      <h2><span class='ck' aria-hidden='true'><svg viewBox='0 0 24 24'><circle cx='12' cy='4.4' r='2.3'/><path d='M12 6.8v6.2M12 8.6l-3.2 1.6M12 8.6l3.2 1.6M12 13l-2.6 5M12 13l2.6 5M5.5 20h13'/></svg></span>今天量一次</h2>
+      <p class="sub">晨起空腹、排便后，同一台秤，数据才可比</p>
+      <div class="grid4">
+        <div class="field">
+          <label for="inW">体重</label>
+          <div class="ctl"><input id="inW" type="number" inputmode="decimal" step="0.1" placeholder="170"><span class="unit">斤</span></div>
+        </div>
+        <div class="field">
+          <label for="inBF">体脂率</label>
+          <div class="ctl"><input id="inBF" type="number" inputmode="decimal" step="0.1" placeholder="28"><span class="unit">%</span></div>
+        </div>
+        <div class="field">
+          <label for="inMUS">骨骼肌</label>
+          <div class="ctl"><input id="inMUS" type="number" inputmode="decimal" step="0.1" placeholder="35"><span class="unit">kg</span></div>
+        </div>
+        <div class="field">
+          <label for="inWaist">腰围</label>
+          <div class="ctl"><input id="inWaist" type="number" inputmode="decimal" step="0.5" placeholder="—"><span class="unit">cm</span></div>
+        </div>
+        <div class="field">
+          <label for="inArm">臂围</label>
+          <div class="ctl"><input id="inArm" type="number" inputmode="decimal" step="0.5" placeholder="—"><span class="unit">cm</span></div>
+        </div>
+        <div class="field">
+          <label for="inHip">臀围</label>
+          <div class="ctl"><input id="inHip" type="number" inputmode="decimal" step="0.5" placeholder="—"><span class="unit">cm</span></div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="saveBody" type="button">存进今天</button>
+        <span class="tip" id="bodyTip">已保存</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class='ck' aria-hidden='true'><svg viewBox='0 0 24 24'><circle cx='14' cy='4.4' r='2.3'/><path d='M13.6 6.9l-3.4 4.2M10.2 11.1l3.6.8M10.2 11.1l-3.2 3.6M13.8 11.9l1.6 5.4M6.4 20.6l2-4M3 8.4h2.2M2.4 12.2h2.2'/></svg></span>体重趋势</h2>
+      <p class="sub">红色虚线是 140 斤目标线</p>
+      <div id="chart"></div>
+      <div id="chartEmpty" class="emptychart"><svg class='figfaint' viewBox='0 0 60 80' aria-hidden='true'><circle cx='30' cy='10' r='6.6'/><path d='M30,19.4 C26,19.4 20,21 18,24 C16.4,30 19.5,34 19.5,40 C15.2,45 15,46 15,50 L45,50 C45,46 44.8,45 40.5,40 C40.5,34 43.6,30 42,24 C40,21 34,19.4 30,19.4 Z'/><path d='M18.5,49 L26.5,49 L27.5,79 L16.5,79 Z'/><path d='M33.5,49 L41.5,49 L43.5,79 L32.5,79 Z'/></svg><span>存两三天体重，这里就会出曲线</span></div>
+      <p id="chartTip">还没有足够的记录，先存两三天体重，曲线就出来了。</p>
+    </div>
+
+    <div class="card">
+      <h2>历史</h2>
+      <p class="sub">单位：斤 / % / kg / cm。三围一起看，才知道掉的是脂肪还是肌肉</p>
+      <div class="tablewrap">
+        <table>
+          <colgroup><col><col><col><col><col></colgroup>
+          <thead><tr><th>日期</th><th>体重</th><th>体脂</th><th>骨骼肌</th><th>腰·臂·臀</th></tr></thead>
+          <tbody id="histBody"></tbody>
+        </table>
+      </div>
+      <div class="actions">
+        <button class="btn gray" id="exportCsv" type="button">导出 CSV</button>
+        <button class="btn gray" id="clearAll" type="button">清空数据</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class='ck' aria-hidden='true'><svg viewBox='0 0 24 24'><circle cx='8' cy='5' r='2.2'/><path d='M8 7.2v6M8 9l-2.6 1.4M8 13.2l-2.2 6M8 13.2l2.2 6M15 3.4v16M15 3.4h5l-1.8 2.4 1.8 2.4h-5'/></svg></span>目标与计划</h2>
+      <p class="sub">改完保存，进度环和曲线按新目标重算</p>
+      <div class="grid2">
+        <div class="field">
+          <label for="inStart">起始体重</label>
+          <div class="ctl"><input id="inStart" type="number" inputmode="decimal" step="0.1" value="170"><span class="unit">斤</span></div>
+        </div>
+        <div class="field">
+          <label for="inTarget">目标体重</label>
+          <div class="ctl"><input id="inTarget" type="number" inputmode="decimal" step="0.1" value="140"><span class="unit">斤</span></div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn ghost" id="saveGoal" type="button">保存目标</button>
+        <span class="tip" id="goalTip">已更新</span>
+      </div>
+      <div style="margin-top:16px">
+        <div class="phase head"><span>阶段</span><span>时间 · 吃 / 动</span><span>阶段末</span></div>
+        <div class="phase" id="ph0"><b>适应期</b><span>11/16–11/29 · 1550 / 400</span><span>167 斤</span></div>
+        <div class="phase" id="ph1"><b>主减期</b><span>11/30–1/24 · 1450 / 500</span><span>151 斤</span></div>
+        <div class="phase" id="ph2"><b>冲刺期</b><span>1/25–2/28 · 1400 / 550</span><span>140 斤</span></div>
+        <div class="phase" id="ph3"><b>维持期</b><span>3 月起 · 2100 / 400</span><span>稳 140</span></div>
+      </div>
+      <p class="sub" style="margin:12px 0 0">
+        每天总消耗 = 基础代谢 1566 ×1.3 + 运动消耗。蛋白按体重 ×1.7（约 145 克），力量 4 次、有氧 5 次，
+        掉肌的第一个信号是力量重量下滑，不是体重。
+      </p>
+    </div>
+  </div>
+
+  <!-- ============ 个人饮食 ============ -->
+  <div class="pane" id="pane-diet">
+    <div class="card">
+      <h2><span class='ck' aria-hidden='true'><svg viewBox='0 0 24 24'><circle cx='12' cy='4.4' r='2.3'/><path d='M12 6.8v5M12 8.4l-3.6 2.2M12 8.4l3.6 2.2M6.6 13.4h10.8c0 2.6-2.2 4.6-5.4 4.6s-5.4-2-5.4-4.6M12 18l-2 2.6M12 18l2 2.6'/></svg></span>今天的热量预算</h2>
+      <p class="sub" id="budgetNote">按当前阶段自动切换</p>
+      <div class="budget">
+        <div class="left">
+          <div class="big" id="leftKcal">—<span>千卡</span></div>
+          <div class="metas"><div>目标<b id="targetKcal">—</b></div><div>已吃<b id="eatenKcal">—</b></div></div>
+        </div>
+      </div>
+      <div class="bar" id="kcalBar"><i id="kcalFill"></i></div>
+      <div class="barline"><span id="barLeft">—</span><span id="barRight">—</span></div>
+    </div>
+
+    <div class="card">
+      <h2><span class='ck' aria-hidden='true'><svg viewBox='0 0 24 24'><circle cx='8.4' cy='5.4' r='2.2'/><path d='M8.4 7.6v6M8.4 9.4l-2.3 1.4M8.4 9.4l2.3 1.4M8.4 13.6l-2.2 5.6M8.4 13.6l2.2 5.6M15 6h6M21 6l-2-2M21 6l-2 2M15 16h6M21 16l-2-2M21 16l-2 2'/></svg></span>今天的缺口</h2>
+      <p class="sub" id="gapNote">缺口 = 日常消耗 + 运动消耗 − 今日摄入</p>
+      <div class="budget">
+        <div class="left">
+          <div class="big" id="gapVal">—<span>千卡</span></div>
+          <div class="metas"><div>总消耗<b id="gapBurn">—</b></div><div>总摄入<b id="gapIntake">—</b></div></div>
+        </div>
+      </div>
+      <div class="bar" id="gapBar"><i id="gapFill"></i></div>
+      <div class="barline"><span id="gapLeftBar">—</span><span id="gapRightBar">—</span></div>
+      <p class="sub" id="gapTip" style="margin:10px 0 0"></p>
+    </div>
+
+    <div class="card">
+      <h2><span class='ck' aria-hidden='true'><svg viewBox='0 0 24 24'><circle cx='9.6' cy='5' r='2.2'/><path d='M9.6 7.2v6M9.6 9l-2.4 1.4M9.6 9l2.4-1.6M9.6 13.2l-2.2 6M9.6 13.2l2.2 6M15 4.6h5.4v7H15z'/></svg></span>拍照记一餐</h2>
+      <p class="sub">拍一张，自动认菜估热量，识别完可以调份量</p>
+      <div class="photodrop" id="photoDrop">
+        <input id="photoInput" type="file" accept="image/*">
+        <span id="photoEmpty">点这里拍照<br>或从相册选一张</span>
+        <img id="photoPreview" alt="这餐的照片" hidden>
+      </div>
+      <div class="actions">
+        <button class="btn" id="aiRun" type="button">识别这张照片</button>
+        <button class="btn gray" id="aiCfg" type="button">接口设置</button>
+      </div>
+      <div id="aiCfgBox" hidden style="margin-top:12px">
+        <div class="grid2">
+          <div class="field">
+            <label for="aiKey">API Key</label>
+            <div class="ctl"><input id="aiKey" type="password" autocomplete="off" placeholder="ark-"></div>
+          </div>
+          <div class="field">
+            <label for="aiModel">模型 ID</label>
+            <div class="ctl"><input id="aiModel" type="text" autocomplete="off" placeholder="doubao-seed-2-1-lite-260915"></div>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn ghost" id="aiSave" type="button">保存配置</button>
+          <span class="aistate" id="aiState">已接通</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>从食物库挑</h2>
+      <p class="sub">点一下就进下面的清单，份量可以加减</p>
+      <div class="searchbox"><input id="foodSearch" type="search" placeholder="搜食物，比如 鸡胸、米饭"></div>
+      <div class="foodgrid" id="foodGrid"></div>
+    </div>
+
+    <div class="card">
+      <h2>这一餐的清单</h2>
+      <p class="sub" id="mealHint">还没选东西</p>
+      <div class="list" id="mealList"></div>
+      <div class="actions">
+        <button class="btn" id="saveMeal" type="button">存进今天</button>
+        <button class="btn gray" id="clearMeal" type="button">清空</button>
+        <span class="tip" id="mealTip">已存进今天</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>今天吃了什么</h2>
+      <p class="sub">按时间倒序，点 × 可以删</p>
+      <div class="list" id="todayMeals"></div>
+    </div>
+
+    <div class="card">
+      <h2>水和小习惯</h2>
+      <div style="margin-top:8px">
+      <div class="row" style="border:0;padding:0 0 2px">
+        <div class="nm">饮水<small>每杯 250ml，目标 2.5–3 升</small></div>
+        <div class="stepper">
+          <button id="waterMinus" type="button">−</button><span id="waterCup">0</span><button id="waterPlus" type="button">+</button>
+        </div>
+      </div>
+      <div class="chips">
+        <button class="chip" id="chipProtein" type="button">今天喝了蛋白饮</button>
+        <button class="chip" id="chipSugar" type="button">今天有含糖饮料</button>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 运动锻炼 ============ -->
+  <div class="pane" id="pane-move">
+    <div class="card">
+      <h2><span class='ck' aria-hidden='true'><svg viewBox='0 0 24 24'><circle cx='12' cy='5' r='2.3'/><path d='M12 7.4v5.4M12 8.8l-3.4-1.6M12 8.8l3.4-1.6M6.4 6.6v3.4M4.6 7.2v2.2M17.6 6.6v3.4M19.4 7.2v2.2M12 12.8l-2.4 5.8M12 12.8l2.4 5.8'/></svg></span>今天练什么</h2>
+      <p class="sub">固定排法，按周几自动显示</p>
+      <div class="todayplan" id="todayPlan">—</div>
+      <div class="weekchips" id="weekChips"></div>
+    </div>
+
+    <div class="card">
+      <h2>力量记录</h2>
+      <p class="sub">动作 · 重量(kg) · 组数 · 每次次数，这是保肌的主力</p>
+      <div class="setrow">
+        <input id="stName" type="text" placeholder="深蹲" list="moveList">
+        <input id="stWeight" type="number" inputmode="decimal" step="0.5" placeholder="kg">
+        <input id="stSets" type="number" inputmode="numeric" placeholder="组">
+        <input id="stReps" type="number" inputmode="numeric" placeholder="次">
+      </div>
+      <datalist id="moveList">
+        <option value="深蹲"></option><option value="硬拉"></option><option value="箭步蹲"></option>
+        <option value="卧推"></option><option value="推举"></option><option value="划船"></option>
+        <option value="高位下拉"></option><option value="臀桥"></option><option value="平板支撑"></option>
+      </datalist>
+      <div class="actions">
+        <button class="btn ghost" id="addStrength" type="button">加一组</button>
+        <span class="tip" id="strengthTip">已加</span>
+      </div>
+      <div class="list" id="strengthList"></div>
+    </div>
+
+    <div class="card">
+      <h2>有氧和步数</h2>
+      <p class="sub">有氧放在力量后做，心率 120–135</p>
+      <div class="grid2">
+        <div class="field">
+          <label for="cardioType">有氧类型</label>
+          <div class="ctl" style="padding:0">
+            <select id="cardioType" style="width:100%;border:0;background:transparent;height:42px;font-family:inherit;font-size:16px;padding:0 10px;outline:0;color:var(--ink)">
+              <option value="快走">快走 · 5.5 千卡/分</option>
+              <option value="爬坡走">爬坡走 · 8 千卡/分</option>
+              <option value="慢跑">慢跑 · 9 千卡/分</option>
+              <option value="单车">单车 · 7 千卡/分</option>
+              <option value="跳绳">跳绳 · 11 千卡/分</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="cardioMin">时长（分钟）</label>
+          <div class="ctl"><input id="cardioMin" type="number" inputmode="numeric" placeholder="40"><span class="unit">分钟</span></div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn ghost" id="addCardio" type="button">加有氧</button>
+      </div>
+      <div class="list" id="cardioList"></div>
+      <div class="grid2" style="margin-top:14px">
+        <div class="field">
+          <label for="inSteps">今日步数</label>
+          <div class="ctl"><input id="inSteps" type="number" inputmode="numeric" placeholder="10000"><span class="unit">步</span></div>
+        </div>
+        <div class="field">
+          <label>步数折算消耗</label>
+          <div class="ctl" style="background:#fbfcfb;border-style:dashed"><input id="stepKcal" type="text" readonly value="0" tabindex="-1"><span class="unit">千卡</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class='ck' aria-hidden='true'><svg viewBox='0 0 24 24'><circle cx='10' cy='4.6' r='2.3'/><path d='M10 7v6.2M10 9.4l2.6-2.2M10 13.2l-2.2 5.6M10 13.2l2.2 5.6M14 6.2h4.4v4.6H14z'/></svg></span>手表同步</h2>
+      <p class="sub">网页读不到手表，用下面任一方式把手表数据带进来</p>
+      <div class="grid2">
+        <div class="field">
+          <label for="inWatchKcal">手表消耗</label>
+          <div class="ctl"><input id="inWatchKcal" type="number" inputmode="numeric" placeholder="—"><span class="unit">千卡</span></div>
+        </div>
+        <div class="field">
+          <label>同步状态</label>
+          <div class="ctl" style="background:#fbfcfb;border-style:dashed"><input id="watchStatus" type="text" readonly value="还没同步" tabindex="-1"></div>
+        </div>
+      </div>
+      <div class="photodrop" id="watchDrop" style="height:120px;margin-top:12px">
+        <input id="watchInput" type="file" accept="image/*">
+        <span id="watchEmpty">点这里选手表数据截图<br>或从相册挑一张</span>
+        <img id="watchPreview" alt="手表截图" hidden>
+      </div>
+      <div class="actions">
+        <button class="btn ghost" id="watchRun" type="button">识别这张截图</button>
+        <span class="tip" id="watchTip">已填好</span>
+      </div>
+      <p class="aistate" id="watchAi"></p>
+      <p class="sub" style="margin-top:10px;font-size:11.5px">快捷指令：取「步数」和「活动能量」，打开本页并在末尾带 <b>?sync=1&amp;steps=步数&amp;burn=消耗</b>，打开即自动写入。</p>
+    </div>
+
+    <div class="card">
+      <h2><span class='ck' aria-hidden='true'><svg viewBox='0 0 24 24'><circle cx='12' cy='4.6' r='2.3'/><path d='M12 7v5.6M12 9l-2.6-2.2M12 9l2.6-2.2M12 12.6l-2.6 6M12 12.6l2.6 6'/></svg></span>今天的消耗</h2>
+      <div class="movesum">
+        <div>力量<b id="burnStrength">—</b></div>
+        <div>有氧<b id="burnCardio">—</b></div>
+        <div><span id="burnStepsLabel">步数</span><b id="burnSteps">—</b></div>
+        <div>合计<b id="burnTotal">—</b></div>
+      </div>
+      <div class="bar" id="burnBar"><i id="burnFill"></i></div>
+      <p class="sub" style="margin:10px 0 0" id="burnNote">目标：当前阶段要求的每天运动消耗</p>
+      <p class="sub" style="margin:4px 0 0;font-size:11.5px" id="burnFormula">按体重估算，记完自动算</p>
+      <div class="bars" id="weekBars"></div>
+      <div class="actions">
+        <button class="btn" id="saveMove" type="button">存进今天</button>
+        <span class="tip" id="moveTip">已保存</span>
+      </div>
+    </div>
+  </div>
+
+
+  <p class="footer">数据只存在这台设备的浏览器里，换地址或清缓存会丢；想长期用建议导出 CSV 备份。</p>
+</div>
+
+<div class="tabbar" id="tabbar">
+  <button data-tab="move" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 14c0-3 2-5 5-5h3"/><circle cx="15" cy="6" r="2.5"/><path d="M9 19l2-5 3 2 3-1"/><path d="M6 19h3"/></svg>
+    运动锻炼
+  </button>
+  <button data-tab="diet" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.4"/><path d="M12 4v2M12 18v2"/></svg>
+    个人饮食
+  </button>
+  <button data-tab="body" class="on" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="5" r="2.4"/><path d="M12 8v6"/><path d="M8 11h8"/><path d="M12 14l-3 6M12 14l3 6"/></svg>
+    身体数据
+  </button>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
